@@ -29,4 +29,11 @@ footer {
     text-align: center;
     font-size: 0.8em;
     color: #777;
+ #globorural-noticias img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
 }
+   
+}
+
