@@ -1,86 +1,62 @@
-/* Estilo geral */
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background-color: #f8f8f8;
-  color: #333;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Globo Rural - AgroBrasil News</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>Globo Rural</h1>
+        <p>Últimas Notícias do Agronegócio</p>
+    </header>
+    <nav>
+        <a href="index.html">Início</a>
+    </nav>
+    <main>
+        <div id="globorural-noticias">Carregando notícias...</div>
+    </main>
+    <footer>
+        <p>&copy; 2025 AgroBrasil News</p>
+    </footer>
 
-header {
-  background-color: #006400;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
+    <script>
+        async function carregarNoticiasGR() {
+            const url =
+                'https://api.rss2json.com/v1/api.json?rss_url=' +
+                encodeURIComponent('https://g1.globo.com/rss/g1/economia/agronegocios/');
+            const resp = await fetch(url);
+            const data = await resp.json();
+            const div = document.getElementById('globorural-noticias');
+            data.items.slice(0, 5).forEach(item => {
+                const el = document.createElement('div');
 
-header h1 {
-  margin: 0;
-  font-size: 2em;
-}
+                // Cria um container para a descrição
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = item.description;
 
-nav {
-  background-color: #228B22;
-  padding: 10px;
-  text-align: center;
-}
+                // Redimensiona as imagens que vierem embutidas
+                tempDiv.querySelectorAll('img').forEach(img => {
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    img.style.margin = '10px 0';
+                });
 
-nav a {
-  color: white;
-  text-decoration: none;
-  margin: 0 15px;
-  font-weight: bold;
-}
+                el.innerHTML = `
+                    <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                    <p>${new Date(item.pubDate).toLocaleDateString('pt-BR')}</p>
+                `;
+                
+                // Anexa a descrição tratada
+                el.appendChild(tempDiv);
+                el.innerHTML += '<hr>';
 
-nav a:hover {
-  text-decoration: underline;
-}
+                div.appendChild(el);
+            });
+        }
 
-main {
-  padding: 20px;
-}
-
-footer {
-  background-color: #006400;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-}
-
-/* Conteúdo das notícias */
-#globorural-noticias {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-#globorural-noticias h3 {
-  margin-bottom: 5px;
-  font-size: 1.2em;
-}
-
-#globorural-noticias p {
-  margin: 5px 0 15px;
-}
-
-/* Imagens dentro das notícias RSS */
-#globorural-noticias img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 10px 0;
-}
-
-/* Separador */
-#globorural-noticias hr {
-  border: none;
-  border-top: 1px solid #ccc;
-  margin: 20px 0;
-}
+        carregarNoticiasGR();
+    </script>
+</body>
+</html>
