@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Globo Rural - AgroBrasil News</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>Globo Rural</h1>
+        <p>Últimas Notícias do Agronegócio</p>
+    </header>
+    <nav>
+        <a href="index.html">Início</a>
+    </nav>
+    <main>
+        <div id="globorural-noticias">Carregando notícias...</div>
+    </main>
+    <footer>
+        <p>&copy; 2025 AgroBrasil News</p>
+    </footer>
+    <script>
+        async function carregarNoticiasGR() {
+            const url =
+                'https://api.rss2json.com/v1/api.json?rss_url=' +
+                encodeURIComponent('https://g1.globo.com/rss/g1/economia/agronegocios/');
+            const resp = await fetch(url);
+            const data = await resp.json();
+            const div = document.getElementById('globorural-noticias');
+            data.items.slice(0, 5).forEach(item => {
+                const el = document.createElement('div');
+                el.innerHTML = `
+                    <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                    <p>${new Date(item.pubDate).toLocaleDateString('pt-BR')}</p>
+                    <p>${item.description}</p><hr>`;
+                div.appendChild(el);
+            });
+        }
+        carregarNoticiasGR();
+    </script>
+</body>
+</html>
