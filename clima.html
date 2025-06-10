@@ -1,1 +1,72 @@
-<h1>Seção de Clima</h1><p>Previsões e análises climáticas para o agronegócio.</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Clima e Tempo - AgroBrasil News</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        #clima {
+            background-color: #eef;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+            box-shadow: 0 0 10px #ccc;
+        }
+        #clima img {
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Clima e Tempo</h1>
+        <p>Previsões e análises climáticas para o agronegócio.</p>
+    </header>
+    <nav>
+        <a href="index.html">Início</a>
+    </nav>
+    <main>
+        <div id="clima">Carregando clima...</div>
+    </main>
+    <footer>
+        <p>&copy; 2025 AgroBrasil News</p>
+    </footer>
+
+    <script>
+        const apiKey = 'f662d38f046717264c8e8b8c90d4d951';
+        const cidade = 'Morro Agudo'; // Você pode trocar pela cidade desejada
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&lang=pt_br&appid=${apiKey}`;
+
+        async function carregarClima() {
+            try {
+                const resp = await fetch(url);
+                const data = await resp.json();
+
+                const climaDiv = document.getElementById('clima');
+                const icone = data.weather[0].icon;
+                const descricao = data.weather[0].description;
+                const temp = data.main.temp;
+                const umidade = data.main.humidity;
+                const vento = data.wind.speed;
+
+                climaDiv.innerHTML = `
+                    <h2>${cidade}</h2>
+                    <img src="https://openweathermap.org/img/wn/${icone}@2x.png" alt="${descricao}" />
+                    <p><strong>${descricao}</strong></p>
+                    <p>🌡️ Temperatura: ${temp}°C</p>
+                    <p>💧 Umidade: ${umidade}%</p>
+                    <p>💨 Vento: ${vento} km/h</p>
+                `;
+            } catch (erro) {
+                document.getElementById('clima').innerHTML = 'Erro ao carregar o clima. Verifique a API.';
+                console.error('Erro:', erro);
+            }
+        }
+
+        carregarClima();
+    </script>
+</body>
+</html>
