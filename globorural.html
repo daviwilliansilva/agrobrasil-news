@@ -14,7 +14,7 @@
         <a href="index.html">Início</a>
     </nav>
     <main>
-        <div id="globorural-noticias">Carregando notícias...</div>
+        <div id="globorural-noticias">Carregando notícias do mês...</div>
     </main>
     <footer>
         <p>&copy; 2025 AgroBrasil News</p>
@@ -28,14 +28,31 @@
             const resp = await fetch(url);
             const data = await resp.json();
             const div = document.getElementById('globorural-noticias');
-            data.items.slice(0, 5).forEach(item => {
+
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+
+            // Filtra apenas as notícias do mês atual
+            const noticiasDoMes = data.items.filter(item => {
+                const dataNoticia = new Date(item.pubDate);
+                return (
+                    dataNoticia.getMonth() === mesAtual &&
+                    dataNoticia.getFullYear() === anoAtual
+                );
+            });
+
+            if (noticiasDoMes.length === 0) {
+                div.innerHTML = '<p>Nenhuma notícia encontrada para este mês.</p>';
+                return;
+            }
+
+            noticiasDoMes.forEach(item => {
                 const el = document.createElement('div');
 
-                // Cria um container para a descrição
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = item.description;
 
-                // Redimensiona as imagens que vierem embutidas
                 tempDiv.querySelectorAll('img').forEach(img => {
                     img.style.maxWidth = '100%';
                     img.style.height = 'auto';
@@ -47,8 +64,7 @@
                     <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
                     <p>${new Date(item.pubDate).toLocaleDateString('pt-BR')}</p>
                 `;
-                
-                // Anexa a descrição tratada
+
                 el.appendChild(tempDiv);
                 el.innerHTML += '<hr>';
 
