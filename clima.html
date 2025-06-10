@@ -18,6 +18,27 @@
             width: 80px;
             height: 80px;
         }
+        .busca-clima {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .busca-clima input {
+            padding: 8px;
+            font-size: 16px;
+            width: 200px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .busca-clima button {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -29,7 +50,11 @@
         <a href="index.html">Início</a>
     </nav>
     <main>
-        <div id="clima">Carregando clima...</div>
+        <div class="busca-clima">
+            <input type="text" id="cidade" placeholder="Digite a cidade..." />
+            <button onclick="buscarClima()">Ver clima</button>
+        </div>
+        <div id="clima">Digite uma cidade acima.</div>
     </main>
     <footer>
         <p>&copy; 2025 AgroBrasil News</p>
@@ -37,22 +62,28 @@
 
     <script>
         const apiKey = 'f662d38f046717264c8e8b8c90d4d951';
-        const cidade = 'São Paulo'; // Você pode trocar pela cidade desejada
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&lang=pt_br&appid=${apiKey}`;
 
-        async function carregarClima() {
+        async function buscarClima() {
+            const cidade = document.getElementById('cidade').value.trim();
+            if (!cidade) {
+                alert('Por favor, digite uma cidade.');
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&lang=pt_br&appid=${apiKey}`;
+
             try {
                 const resp = await fetch(url);
+                if (!resp.ok) throw new Error("Cidade não encontrada");
                 const data = await resp.json();
 
-                const climaDiv = document.getElementById('clima');
                 const icone = data.weather[0].icon;
                 const descricao = data.weather[0].description;
                 const temp = data.main.temp;
                 const umidade = data.main.humidity;
                 const vento = data.wind.speed;
 
-                climaDiv.innerHTML = `
+                document.getElementById('clima').innerHTML = `
                     <h2>${cidade}</h2>
                     <img src="https://openweathermap.org/img/wn/${icone}@2x.png" alt="${descricao}" />
                     <p><strong>${descricao}</strong></p>
@@ -61,12 +92,10 @@
                     <p>💨 Vento: ${vento} km/h</p>
                 `;
             } catch (erro) {
-                document.getElementById('clima').innerHTML = 'Erro ao carregar o clima. Verifique a API.';
+                document.getElementById('clima').innerHTML = 'Cidade não encontrada ou erro na API.';
                 console.error('Erro:', erro);
             }
         }
-
-        carregarClima();
     </script>
 </body>
 </html>
