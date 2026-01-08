@@ -1,78 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Globo Rural - AgroBrasil News</title>
-    <link rel="stylesheet" href="style.css" />
+
+    <!-- AJUSTE AQUI -->
+    <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-    <header>
-        <h1>Globo Rural</h1>
-        <p>Últimas Notícias do Agronegócio</p>
-    </header>
-    <nav>
-        <a href="index.html">Início</a>
-    </nav>
-    <main>
-        <div id="globorural-noticias">Carregando notícias do mês...</div>
-    </main>
-    <footer>
-        <p>&copy; 2025 AgroBrasil News</p>
-    </footer>
 
-    <script>
-        async function carregarNoticiasGR() {
-            const url =
-                'https://api.rss2json.com/v1/api.json?rss_url=' +
-                encodeURIComponent('https://g1.globo.com/rss/g1/economia/agronegocios/');
-            const resp = await fetch(url);
-            const data = await resp.json();
-            const div = document.getElementById('globorural-noticias');
+<header>
+    <h1>Globo Rural</h1>
+    <p>Últimas Notícias do Agronegócio</p>
+</header>
 
-            const hoje = new Date();
-            const mesAtual = hoje.getMonth();
-            const anoAtual = hoje.getFullYear();
+<nav>
+    <a href="index.html">Início</a>
+</nav>
 
-            // Filtra apenas as notícias do mês atual
-            const noticiasDoMes = data.items.filter(item => {
-                const dataNoticia = new Date(item.pubDate);
-                return (
-                    dataNoticia.getMonth() === mesAtual &&
-                    dataNoticia.getFullYear() === anoAtual
-                );
-            });
+<main>
+    <div id="globorural-noticias">Carregando notícias...</div>
+</main>
 
-            if (noticiasDoMes.length === 0) {
-                div.innerHTML = '<p>Nenhuma notícia encontrada para este mês.</p>';
-                return;
-            }
+<footer>
+    <p>&copy; 2025 AgroBrasil News</p>
+</footer>
 
-            noticiasDoMes.forEach(item => {
-                const el = document.createElement('div');
+<script>
+async function carregarNoticiasGR() {
+    const url = 'https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/globo-rural/';
+    const resp = await fetch(url);
+    const data = await resp.json();
 
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = item.description;
+    const div = document.getElementById('globorural-noticias');
+    div.innerHTML = '';
 
-                tempDiv.querySelectorAll('img').forEach(img => {
-                    img.style.maxWidth = '100%';
-                    img.style.height = 'auto';
-                    img.style.display = 'block';
-                    img.style.margin = '10px 0';
-                });
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
 
-                el.innerHTML = `
-                    <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-                    <p>${new Date(item.pubDate).toLocaleDateString('pt-BR')}</p>
-                `;
+    const noticiasDoMes = data.items.filter(item => {
+        const dataNoticia = new Date(item.pubDate);
+        return dataNoticia.getMonth() === mesAtual &&
+               dataNoticia.getFullYear() === anoAtual;
+    });
 
-                el.appendChild(tempDiv);
-                el.innerHTML += '<hr>';
+    if (noticiasDoMes.length === 0) {
+        div.innerHTML = '<p>Nenhuma notícia encontrada para este mês.</p>';
+        return;
+    }
 
-                div.appendChild(el);
-            });
-        }
+    noticiasDoMes.forEach(item => {
+        const el = document.createElement('div');
 
-        carregarNoticiasGR();
-    </script>
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.description;
+
+        tempDiv.querySelectorAll('img').forEach(img => {
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+        });
+
+        el.innerHTML = `
+            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+            <p>${new Date(item.pubDate).toLocaleDateString('pt-BR')}</p>
+        `;
+
+        el.appendChild(tempDiv);
+        el.innerHTML += '<hr>';
+
+        div.appendChild(el);
+    });
+}
+
+carregarNoticiasGR();
+</script>
+
 </body>
 </html>
